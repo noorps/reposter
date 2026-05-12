@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Reposter",
+  "version": "1.0",
+  "description": "Pre-fills your Facebook group post so you just click Post.",
+  "permissions": ["tabs", "scripting", "storage", "alarms", "notifications"],
+  "host_permissions": ["https://www.facebook.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Reposter"
+  }
+}
