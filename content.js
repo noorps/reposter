@@ -9,7 +9,7 @@ async function waitForButton(text, timeout = 10000) {
     for (const btn of buttons) {
       if (btn.textContent.trim() === text) return btn;
     }
-    await sleep(300);
+    await sleep(150);
   }
   return null;
 }
@@ -17,14 +17,122 @@ async function waitForButton(text, timeout = 10000) {
 async function waitForComposer(timeout = 10000) {
   const start = Date.now();
   while (Date.now() - start < timeout) {
-    const dialog = document.querySelector('[role="dialog"]');
+    const dialog = [...document.querySelectorAll('[role="dialog"]')]
+      .find(el => el.innerText.includes("Create post")) ||
+      document.querySelector('[role="dialog"]');
+
     if (dialog) {
-      const composer = dialog.querySelector('[contenteditable="true"]');
+      const composers = [...dialog.querySelectorAll('[contenteditable="true"]')]
+        .filter(isVisible);
+      const composer =
+        composers.find(el => /create a public post/i.test(getComposerLabel(el))) ||
+        composers.find(el => /what do you want to talk about|write something/i.test(getComposerLabel(el))) ||
+        composers.find(el => el.getAttribute("role") === "textbox") ||
+        composers[0];
       if (composer && composer.offsetParent !== null) return composer;
     }
-    await sleep(300);
+    await sleep(150);
   }
   return null;
+}
+
+function getComposerLabel(el) {
+  return [
+    el.getAttribute("aria-placeholder"),
+    el.getAttribute("aria-label"),
+    el.getAttribute("placeholder"),
+    el.innerText,
+    el.textContent
+  ].filter(Boolean).join(" ");
+}
+
+function isVisible(el) {
+  const rect = el.getBoundingClientRect();
+  const style = window.getComputedStyle(el);
+  return (
+    rect.width > 0 &&
+    rect.height > 0 &&
+    style.visibility !== "hidden" &&
+    style.display !== "none"
+  );
+}
+
+function requestDebuggerTyping(text, timeout = 10000) {
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => {
+      resolve({ ok: false, error: "Timed out waiting for debugger typing" });
+    }, timeout);
+
+    chrome.runtime.sendMessage({ action: "typeText", text }, (response) => {
+      clearTimeout(timer);
+      resolve(response || { ok: false, error: chrome.runtime.lastError?.message || "No typing response" });
+    });
+  });
+}
+
+async function focusComposer(composer) {
+  composer.scrollIntoView({ block: "center", inline: "nearest" });
+
+  const rect = composer.getBoundingClientRect();
+  const x = rect.left + Math.min(24, rect.width / 2);
+  const y = rect.top + Math.min(24, rect.height / 2);
+  const target = document.elementFromPoint(x, y) || composer;
+
+  target.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true, clientX: x, clientY: y }));
+  target.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true, clientX: x, clientY: y }));
+  target.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, clientX: x, clientY: y }));
+  composer.focus();
+  await sleep(75);
+
+  const selection = window.getSelection();
+  const range = document.createRange();
+  range.selectNodeContents(composer);
+  range.collapse(false);
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+
+async function waitForInsertedText(composer, text, timeout = 2000) {
+  const start = Date.now();
+  const sample = text.slice(0, 20);
+
+  while (Date.now() - start < timeout) {
+    if (composer.innerText.includes(sample)) return true;
+    await sleep(100);
+  }
+
+  return false;
+}
+
+async function insertComposerText(composer, text) {
+  await focusComposer(composer);
+
+  const debuggerResult = await requestDebuggerTyping(text);
+  if (debuggerResult.ok) {
+    return waitForInsertedText(composer, text);
+  }
+
+  console.log("Reposter: debugger typing failed, trying DOM insertion", debuggerResult.error);
+
+  const beforeInput = new InputEvent("beforeinput", {
+    bubbles: true,
+    cancelable: true,
+    composed: true,
+    inputType: "insertText",
+    data: text
+  });
+  composer.dispatchEvent(beforeInput);
+
+  document.execCommand("insertText", false, text);
+
+  composer.dispatchEvent(new InputEvent("input", {
+    bubbles: true,
+    composed: true,
+    inputType: "insertText",
+    data: text
+  }));
+
+  return waitForInsertedText(composer, text);
 }
 
 function isGroupPaused() {
@@ -36,11 +144,10 @@ function isGroupPaused() {
   );
 }
 
-async function run() {
+async function run(postText) {
   console.log("Reposter: started");
-  await sleep(1500);
+  await sleep(600);
 
-  // Close tab if group is paused
   if (isGroupPaused()) {
     console.log("Reposter: group is paused, closing tab");
     chrome.runtime.sendMessage({ action: "closeTab" });
@@ -56,30 +163,30 @@ async function run() {
 
   console.log("Reposter: clicking composer");
   placeholder.click();
-  await sleep(1200);
+  await sleep(200);
 
   const composer = await waitForComposer();
   if (!composer) {
     console.log("Reposter: composer never appeared");
+    chrome.runtime.sendMessage({ action: "postingFailed" });
     return;
   }
 
   console.log("Reposter: pasting text");
-  composer.click();
-  composer.focus();
-  await sleep(200);
-
-  const dataTransfer = new DataTransfer();
-  dataTransfer.setData('text/plain', postText);
-  composer.dispatchEvent(new ClipboardEvent('paste', {
-    clipboardData: dataTransfer,
-    bubbles: true,
-    cancelable: true
-  }));
+  const inserted = await insertComposerText(composer, postText);
+  if (!inserted) {
+    console.log("Reposter: text insertion did not verify");
+    chrome.runtime.sendMessage({ action: "postingFailed" });
+    return;
+  }
 
   console.log("Reposter: done!");
+  await sleep(100);
+  chrome.runtime.sendMessage({ action: "postingDone" });
 }
 
-const postText = "Hey everyone! I offer tennis lessons and SAT tutoring in the Austin/DFW area. All skill levels welcome — DM me for availability! 🎾";
-
-run();
+// Entry point — read from storage, fall back to default if nothing saved
+chrome.storage.local.get(["postText"], (data) => {
+  const postText = data.postText || "Hey everyone! I offer tennis lessons and SAT tutoring in the Austin/DFW area. All skill levels welcome — DM me for availability! 🎾";
+  run(postText);
+});

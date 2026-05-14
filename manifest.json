@@ -3,7 +3,7 @@
   "name": "Reposter",
   "version": "1.0",
   "description": "Pre-fills your Facebook group post so you just click Post.",
-  "permissions": ["tabs", "scripting", "storage", "alarms", "notifications"],
+  "permissions": ["tabs", "scripting", "storage", "alarms", "notifications", "debugger"],
   "host_permissions": ["https://www.facebook.com/*"],
   "background": {
     "service_worker": "background.js"

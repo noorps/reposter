@@ -2,29 +2,86 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function typeTextInTab(tabId, text) {
+  const target = { tabId };
+
+  return new Promise((resolve) => {
+    chrome.debugger.attach(target, "1.3", () => {
+      const attachError = chrome.runtime.lastError;
+      if (attachError) {
+        resolve({ ok: false, error: attachError.message });
+        return;
+      }
+
+      chrome.debugger.sendCommand(target, "Input.insertText", { text }, () => {
+        const insertError = chrome.runtime.lastError;
+        chrome.debugger.detach(target, () => {
+          resolve({
+            ok: !insertError,
+            error: insertError?.message
+          });
+        });
+      });
+    });
+  });
+}
+
 function openAndInject(url) {
   return new Promise((resolve) => {
+    let openedTabId = null;
+    let finished = false;
+    let updatedListener = null;
+    const timeoutId = setTimeout(() => finish(false), 30000);
+
+    function finish(ok = true) {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timeoutId);
+      chrome.runtime.onMessage.removeListener(messageListener);
+      chrome.tabs.onRemoved.removeListener(removedListener);
+      if (updatedListener) chrome.tabs.onUpdated.removeListener(updatedListener);
+      resolve(ok);
+    }
+
+    function messageListener(message, sender) {
+      if (sender.tab?.id !== openedTabId) return;
+      if (message.action === "postingDone" || message.action === "closeTab") {
+        finish(true);
+      }
+      if (message.action === "postingFailed") {
+        finish(false);
+      }
+    }
+
+    function removedListener(tabId) {
+      if (tabId === openedTabId) finish();
+    }
+
     chrome.tabs.create({ url }, (tab) => {
+      openedTabId = tab.id;
+      chrome.runtime.onMessage.addListener(messageListener);
+      chrome.tabs.onRemoved.addListener(removedListener);
 
       async function tryInject(tabId, attempts = 0) {
-        if (attempts > 8) { resolve(); return; }
+        if (attempts > 8) { finish(); return; }
         try {
           await chrome.scripting.executeScript({
             target: { tabId },
             files: ["content.js"]
           });
-          resolve();
         } catch (err) {
-          setTimeout(() => tryInject(tabId, attempts + 1), 800);
+          setTimeout(() => tryInject(tabId, attempts + 1), 400);
         }
       }
 
-      chrome.tabs.onUpdated.addListener(function listener(tabId, changeInfo) {
+      updatedListener = function listener(tabId, changeInfo) {
         if (tabId === tab.id && changeInfo.status === "complete") {
-          chrome.tabs.onUpdated.removeListener(listener);
-          setTimeout(() => tryInject(tab.id), 2000);
+          chrome.tabs.onUpdated.removeListener(updatedListener);
+          updatedListener = null;
+          setTimeout(() => tryInject(tab.id), 800);
         }
-      });
+      };
+      chrome.tabs.onUpdated.addListener(updatedListener);
 
     });
   });
@@ -32,8 +89,9 @@ function openAndInject(url) {
 
 async function openGroups(groups) {
   for (const url of groups) {
-    await openAndInject(url);
-    await sleep(800);
+    const ok = await openAndInject(url);
+    if (!ok) break;
+    await sleep(250);
   }
 }
 
@@ -66,7 +124,13 @@ function showNotification() {
   });
 }
 
-chrome.runtime.onMessage.addListener((message, sender) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "typeText") {
+    typeTextInTab(sender.tab.id, message.text).then(response => {
+      sendResponse(response);
+    });
+    return true;
+  }
   if (message.action === "openAndInject") {
     openGroups(message.groups);
   }
