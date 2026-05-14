@@ -28,6 +28,19 @@
         letter-spacing: 0.05em;
       }
 
+      textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 13px;
+        font-family: Arial, sans-serif;
+        resize: vertical;
+        color: #111;
+        background: white;
+        line-height: 1.4;
+      }
+
       .group-list {
         background: white;
         border: 1px solid #e5e7eb;
@@ -139,6 +152,13 @@
   </head>
   <body>
     <h1>Reposter 🔁</h1>
+
+    <div class="section-label">Your Message</div>
+    <div style="margin-bottom: 16px;">
+      <textarea id="postText" rows="4" placeholder="Type your ad message here..."></textarea>
+      <button class="save-btn" id="saveMessage" style="width:100%; margin-top:6px;">Save Message</button>
+      <div class="saved-msg" id="messageSaved"></div>
+    </div>
 
     <div class="section-label">Your Groups</div>
     <div class="group-list">

@@ -6,6 +6,13 @@ const GROUPS = [
   { id: "g5", url: "https://www.facebook.com/groups/1438402670290014" },
 ];
 
+// Load saved message
+chrome.storage.local.get(["postText"], (data) => {
+  if (data.postText) {
+    document.getElementById("postText").value = data.postText;
+  }
+});
+
 // Load saved reminder settings
 chrome.storage.local.get(["reminderDay", "reminderTime"], (data) => {
   if (data.reminderDay !== undefined) {
@@ -16,20 +23,28 @@ chrome.storage.local.get(["reminderDay", "reminderTime"], (data) => {
   }
 });
 
+// Save message
+document.getElementById("saveMessage").addEventListener("click", () => {
+  const text = document.getElementById("postText").value.trim();
+  if (!text) return;
+  chrome.storage.local.set({ postText: text });
+  const msg = document.getElementById("messageSaved");
+  msg.textContent = "Message saved!";
+  setTimeout(() => msg.textContent = "", 2000);
+});
+
 // Save reminder
 document.getElementById("saveReminder").addEventListener("click", () => {
   const day = parseInt(document.getElementById("reminderDay").value);
   const hour = parseInt(document.getElementById("reminderTime").value);
-
   chrome.storage.local.set({ reminderDay: day, reminderTime: hour });
   chrome.runtime.sendMessage({ action: "setReminder", day, hour });
-
   const msg = document.getElementById("savedMsg");
   msg.textContent = "Reminder saved!";
   setTimeout(() => msg.textContent = "", 2000);
 });
 
-// Test reminder notification immediately
+// Test reminder
 document.getElementById("testReminder").addEventListener("click", () => {
   chrome.runtime.sendMessage({ action: "testReminder" });
   const msg = document.getElementById("savedMsg");
