@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Reposter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #fbf4ea;
+      --surface: #fffaf2;
+      --border: #e6d8c6;
+      --text: #16243d;
+      --muted: #687589;
+      --subtle: #9298a3;
+      --accent: #4c8fbd;
+      --accent-strong: #2d78b7;
+      --accent-deep: #1f5f96;
+    }
+
+    body {
+      font-family: "Nunito Sans", "Nunito", sans-serif;
+      background:
+        radial-gradient(ellipse at 8% 6%, rgba(94,158,199,0.18) 0%, transparent 34%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 40px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(251,244,234,0.9);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-brand {
+      font-family: "Nunito", sans-serif;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .nav-back {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .nav-back:hover { color: var(--text); }
+
+    .page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 64px 32px 96px;
+    }
+
+    .page-header {
+      margin-bottom: 48px;
+    }
+
+    .page-header h1 {
+      font-family: "Nunito", sans-serif;
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 10px;
+    }
+
+    .page-header p {
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .policy-section {
+      margin-bottom: 40px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px 32px;
+    }
+
+    .policy-section h2 {
+      font-family: "Nunito", sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 14px;
+      color: var(--text);
+    }
+
+    .policy-section p,
+    .policy-section li {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-weight: 600;
+    }
+
+    .policy-section ul {
+      padding-left: 20px;
+      display: grid;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .policy-section a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .policy-section a:hover { color: var(--accent-deep); }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .footer-brand {
+      font-family: "Nunito", sans-serif;
+      font-weight: 900;
+      font-size: 16px;
+    }
+
+    .footer-copy {
+      font-size: 13px;
+      color: var(--subtle);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-brand">reposter</a>
+    <a href="index.html" class="nav-back">← Back to home</a>
+  </nav>
+
+  <div class="page">
+    <div class="page-header">
+      <h1>Privacy Policy</h1>
+      <p>Last updated: May 2026</p>
+    </div>
+
+    <div class="policy-section">
+      <h2>What Reposter collects</h2>
+      <p>Reposter collects the following information when you create an account:</p>
+      <ul>
+        <li>Your email address</li>
+        <li>Your business name, business type, and location — used only to personalize group recommendations</li>
+      </ul>
+      <p style="margin-top:12px;">This information is stored securely using Supabase and is never sold or shared with third parties.</p>
+    </div>
+
+    <div class="policy-section">
+      <h2>What Reposter stores locally</h2>
+      <p>Reposter stores the following data in your browser's local Chrome storage:</p>
+      <ul>
+        <li>Your saved message variants and post text</li>
+        <li>Your saved Facebook group list and selections</li>
+        <li>Your weekly reminder settings</li>
+        <li>Your session token, used to keep you logged in</li>
+      </ul>
+      <p style="margin-top:12px;">This data never leaves your browser except as described in this policy.</p>
+    </div>
+
+    <div class="policy-section">
+      <h2>Facebook interaction</h2>
+      <p>Reposter opens Facebook group pages and pre-fills the post composer on your behalf using browser automation. Reposter does not read, collect, or transmit any content from Facebook pages you visit. It does not store or have access to your Facebook credentials.</p>
+    </div>
+
+    <div class="policy-section">
+      <h2>The debugger permission</h2>
+      <p>Reposter uses Chrome's debugger API solely to simulate keyboard input into Facebook's post composer. This is required because Facebook's editor (built on Lexical) does not respond to standard DOM text insertion methods. The debugger is attached only at the moment of typing and detached immediately after. No browsing data is accessed or recorded through this permission.</p>
+    </div>
+
+    <div class="policy-section">
+      <h2>Third-party services</h2>
+      <p>Reposter uses Supabase for account authentication and profile storage. You can read Supabase's privacy policy at <a href="https://supabase.com/privacy" target="_blank">supabase.com/privacy</a>.</p>
+    </div>
+
+    <div class="policy-section">
+      <h2>Data deletion</h2>
+      <p>To delete your account and all associated data, email <a href="mailto:noorps006@gmail.com">noorps006@gmail.com</a> with the subject line "Delete my account." Your data will be removed within 7 days.</p>
+    </div>
+
+    <div class="policy-section">
+      <h2>Contact</h2>
+      <p>Questions about this privacy policy? Reach out at <a href="mailto:noorps006@gmail.com">noorps006@gmail.com</a>.</p>
+    </div>
+  </div>
+
+  <footer>
+    <span class="footer-brand">reposter</span>
+    <span class="footer-copy">© 2026 Reposter</span>
+  </footer>
+
+</body>
+</html>
