@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      :root {
+        color-scheme: light;
+        --bg: #fbf4ea;
+        --panel: #fffaf2;
+        --panel-soft: #f4fbff;
+        --border: #e6d8c6;
+        --text: #16243d;
+        --muted: #687589;
+        --muted-soft: #9298a3;
+        --accent: #4c8fbd;
+        --accent-strong: #2d78b7;
+        --accent-deep: #1f5f96;
+        --coral: #e9826f;
+        --danger: #c85c68;
+        --success: #3d9f72;
+      }
+
+      body {
+        width: 380px;
+        max-height: 620px;
+        overflow-y: auto;
+        padding: 18px;
+        font-family: "Avenir Next", "Nunito", "Quicksand", "Aptos", "Segoe UI Variable Text", "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(94, 158, 199, 0.22), transparent 34%),
+          radial-gradient(circle at 88% 8%, rgba(233, 130, 111, 0.18), transparent 26%),
+          var(--bg);
+        color: var(--text);
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
+
+      h1 {
+        font-size: 22px;
+        font-weight: 800;
+        line-height: 1;
+        color: var(--text);
+        letter-spacing: 0;
+      }
+
+      .top-note {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 750;
+      }
+
+      .link-button {
+        padding: 0;
+        background: transparent;
+        border: none;
+        color: var(--accent);
+      }
+
+      .link-button:hover {
+        color: var(--text);
+      }
+
+      .section {
+        margin-bottom: 14px;
+      }
+
+      .section-label {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        font-weight: 850;
+        color: var(--muted);
+        margin-bottom: 8px;
+        letter-spacing: 0;
+      }
+
+      .section-note {
+        color: var(--muted-soft);
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 14px;
+        box-shadow: 0 10px 24px rgba(41, 54, 83, 0.08);
+      }
+
+      input[type="text"],
+      textarea,
+      select {
+        width: 100%;
+        padding: 9px 10px;
+        border: 1px solid var(--border);
+        border-radius: 11px;
+        font-size: 13px;
+        font-family: "Avenir Next", "Nunito", "Quicksand", "Aptos", "Segoe UI Variable Text", "Segoe UI", sans-serif;
+        background: #fbfdff;
+        color: var(--text);
+        outline: none;
+      }
+
+      input[type="text"]:focus,
+      textarea:focus,
+      select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(76, 143, 189, 0.14);
+      }
+
+      textarea {
+        min-height: 108px;
+        resize: vertical;
+        line-height: 1.45;
+        margin-top: 8px;
+      }
+
+      select {
+        cursor: pointer;
+      }
+
+      .field-gap {
+        margin-top: 8px;
+      }
+
+      .btn-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      button {
+        border: none;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 800;
+        font-family: "Avenir Next", "Nunito", "Quicksand", "Aptos", "Segoe UI Variable Text", "Segoe UI", sans-serif;
+        cursor: pointer;
+        transition: background 120ms ease, border-color 120ms ease, opacity 120ms ease;
+      }
+
+      .save-btn {
+        flex: 1;
+        padding: 8px;
+        color: var(--text);
+        background: var(--panel-soft);
+        border: 1px solid var(--border);
+      }
+
+      .save-btn:hover {
+        background: #ddf0f8;
+        border-color: #b9d4e3;
+      }
+
+      .primary-btn {
+        background: linear-gradient(135deg, var(--accent-strong), #64a6cf);
+        border-color: var(--accent-strong);
+        box-shadow: 0 8px 18px rgba(45, 120, 183, 0.18);
+      }
+
+      .primary-btn:hover {
+        background: var(--accent-deep);
+        border-color: var(--accent-deep);
+      }
+
+      .danger-btn {
+        color: #a83a49;
+        background: #fff0f2;
+        border-color: #f3c1c8;
+      }
+
+      .danger-btn:hover {
+        background: #ffe3e7;
+      }
+
+      .group-list {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        overflow: hidden;
+      }
+
+      .group-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+      }
+
+      .group-item:last-child { border-bottom: none; }
+
+      .group-item input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--accent);
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+
+      .group-item label {
+        font-size: 13px;
+        cursor: pointer;
+        line-height: 1.3;
+        color: var(--text);
+      }
+
+      .empty-state {
+        padding: 12px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .reminder-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .saved-msg,
+      .status {
+        font-size: 12px;
+        color: var(--muted);
+        text-align: center;
+        margin-top: 8px;
+        min-height: 16px;
+      }
+
+      .saved-msg.success { color: var(--success); }
+      .saved-msg.error,
+      .status.error { color: var(--danger); }
+
+      .post-btn {
+        width: 100%;
+        padding: 12px;
+        background: var(--accent-strong);
+        color: white;
+        border: 1px solid var(--accent-strong);
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 800;
+        font-family: "Avenir Next", "Nunito", "Quicksand", "Aptos", "Segoe UI Variable Text", "Segoe UI", sans-serif;
+      }
+
+      .post-btn:hover { background: var(--accent-deep); }
+      .post-btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <h1>reposter</h1>
+      <button class="top-note link-button" id="openDashboard">dashboard</button>
+    </div>
+
+    <div class="section">
+      <div class="section-label">
+        <span>message variant</span>
+        <span class="section-note">- save different ads and posts</span>
+      </div>
+      <div class="panel">
+        <select id="variantSelect"></select>
+        <input class="field-gap" type="text" id="variantName" placeholder="Variant name, e.g. SAT tutoring" />
+        <textarea id="postText" rows="5" placeholder="Write a reusable post for a service, promo, class, or offer..."></textarea>
+        <div class="btn-row">
+          <button class="save-btn primary-btn" id="saveVariant">Save</button>
+          <button class="save-btn" id="newVariant">New Message</button>
+          <button class="save-btn danger-btn" id="deleteVariant">Delete</button>
+        </div>
+        <div class="saved-msg" id="messageSaved"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">
+        <span>your groups</span>
+        <span class="section-note">- choose where this variant opens</span>
+      </div>
+      <div class="group-list" id="groupList"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">
+        <span>weekly reminder</span>
+        <span class="section-note">- keep posting consistently</span>
+      </div>
+      <div class="panel">
+        <div class="reminder-row">
+          <select id="reminderDay">
+            <option value="0">Sunday</option>
+            <option value="1" selected>Monday</option>
+            <option value="2">Tuesday</option>
+            <option value="3">Wednesday</option>
+            <option value="4">Thursday</option>
+            <option value="5">Friday</option>
+            <option value="6">Saturday</option>
+          </select>
+          <select id="reminderTime">
+            <option value="6">6:00 AM</option>
+            <option value="7">7:00 AM</option>
+            <option value="8">8:00 AM</option>
+            <option value="9" selected>9:00 AM</option>
+            <option value="10">10:00 AM</option>
+            <option value="11">11:00 AM</option>
+            <option value="12">12:00 PM</option>
+            <option value="13">1:00 PM</option>
+            <option value="14">2:00 PM</option>
+            <option value="15">3:00 PM</option>
+            <option value="16">4:00 PM</option>
+            <option value="17">5:00 PM</option>
+            <option value="18">6:00 PM</option>
+            <option value="19">7:00 PM</option>
+            <option value="20">8:00 PM</option>
+            <option value="21">9:00 PM</option>
+            <option value="22">10:00 PM</option>
+            <option value="23">11:00 PM</option>
+          </select>
+        </div>
+        <div class="btn-row">
+          <button class="save-btn" id="saveReminder">Save Reminder</button>
+        </div>
+        <div class="saved-msg" id="savedMsg"></div>
+      </div>
+    </div>
+
+    <button class="post-btn" id="postBtn">Post Selected Message</button>
+    <div class="status" id="status"></div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
