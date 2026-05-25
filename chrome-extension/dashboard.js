@@ -527,7 +527,7 @@ function render() {
     <div class="dashboard">
       <aside class="sidebar">
         <div class="sidebar-brand">
-          <h1>reposter</h1>
+          <h1>reposter 𓆝 𓆟 𓆞 </h1>
           <p>${escapeHtml(state.user.businessName)} · ${escapeHtml(state.user.location)}</p>
         </div>
         <nav class="nav">
@@ -693,7 +693,7 @@ function renderAuth() {
     <div class="auth-shell">
       <div class="auth-card">
         <section class="auth-aside">
-          <h1 class="brand">reposter</h1>
+          <h1 class="brand">reposter 𓆝 𓆟 𓆞 </h1>
           <p class="brand-motto">specific groups. better reach. less posting chaos.</p>
           <p>Reposter makes advertising in targeted Facebook groups simpler by helping you organize messages, save group lists, and find audiences that fit your business.</p>
         </section>
