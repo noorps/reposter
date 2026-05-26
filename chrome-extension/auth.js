@@ -113,18 +113,6 @@ async function storeSessionFromUrlHash() {
     location: user.user_metadata?.location || "My Area"
   };
 
-  let plan = "free";
-try {
-  const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/profiles?id=eq.${authResponse.user.id}&select=plan`, {
-    headers: {
-      apikey: SUPABASE_CONFIG.anonKey,
-      Authorization: `Bearer ${authResponse.access_token}`
-    }
-  });
-  const data = await res.json();
-  plan = data?.[0]?.plan || "free";
-} catch {}
-
   const dashboardUser = await storeAuthSession({
     access_token: accessToken,
     refresh_token: refreshToken,
@@ -169,8 +157,7 @@ async function storeAuthSession(authResponse, profile) {
     businessName: authResponse.user?.user_metadata?.businessName || profile.businessName,
     businessType: authResponse.user?.user_metadata?.businessType || profile.businessType,
     location: authResponse.user?.user_metadata?.location || profile.location,
-    authProvider: "supabase",
-    plan
+    authProvider: "supabase"
   };
 
   await chromeSet({
