@@ -34,24 +34,39 @@ function scrapeFacebookGroupResults() {
     const match = anchor.href.match(/https:\/\/www\.facebook\.com\/groups\/([^/?#]+)/);
     if (!match) return null;
 
-    const url = `https://www.facebook.com/groups/${match[1]}`;
+    const groupId = match[1];
+    const url = `https://www.facebook.com/groups/${groupId}`;
     if (seen.has(url)) return null;
     seen.add(url);
 
     const container = anchor.closest('[role="article"], [role="listitem"]') || anchor.closest("div");
-    const lines = (container?.innerText || anchor.innerText || "")
+    const rawText = container?.innerText || anchor.innerText || "";
+
+    // Skip anchors whose surrounding text is clearly a notification
+    if (/^unread|keep the convo|you can (join|post)|welcome to.*now you can/i.test(rawText.trim())) return null;
+
+    const lines = rawText
       .split("\n")
       .map(line => line.trim())
-      .filter(Boolean);
-    const name = lines.find(line =>
-      !/join|joined|public group|private group|members?|posts?/i.test(line)
-    ) || anchor.innerText || "Facebook group";
+      .filter(line =>
+        line.length > 3 &&
+        !/^unread/i.test(line) &&
+        !/^\d+[hdwm]$/.test(line) &&
+        !/^(join|joined|public group|private group|members?|posts?)$/i.test(line) &&
+        !/keep the convo|you can (join|post)|welcome to/i.test(line)
+      );
 
-    const privacy = lines.find(line => /public group|private group/i.test(line)) || "";
+    const name = lines.find(line =>
+      !/public group|private group|members?|posts?/i.test(line)
+    ) || anchor.innerText.trim() || "Facebook group";
+
+    if (!name || /unread|keep the convo|you can (join|post)/i.test(name)) return null;
+
+    const privacy = rawText.match(/public group|private group/i)?.[0] || "";
     const members = lines.find(line => /members?/i.test(line)) || "";
 
     return { name, url, privacy, members };
-  }).filter(Boolean).slice(0, 8);
+  }).filter(Boolean).slice(0, 12);
 }
 
 function findGroupUrls(query) {
@@ -93,7 +108,7 @@ function findGroupUrls(query) {
 
       function listener(tabId, changeInfo) {
         if (tabId === tab.id && changeInfo.status === "complete") {
-          setTimeout(runScrape, 3500);
+          setTimeout(runScrape, 5000);
         }
       }
 
