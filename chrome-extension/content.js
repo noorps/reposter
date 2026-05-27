@@ -187,6 +187,6 @@ async function run(postText) {
 
 // Entry point — read from storage, fall back to default if nothing saved
 chrome.storage.local.get(["postText"], (data) => {
-  const postText = data.postText || "Hey everyone! I offer tennis lessons and SAT tutoring in the Austin/DFW area. All skill levels welcome — DM me for availability! 🎾";
+  const postText = data.postText || "Hi everyone! I offer local services in your area. Feel free to message me for details and availability!";
   run(postText);
 });
