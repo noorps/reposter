@@ -1,10 +1,4 @@
-const DEFAULT_GROUPS = [
-  { id: "g1", name: "Indians in Dallas/Fort Worth", url: "https://www.facebook.com/groups/146104119060597", selected: true },
-  { id: "g2", name: "Punjabis in Dallas", url: "https://www.facebook.com/groups/1983005668510281", selected: true },
-  { id: "g3", name: "Frisco Desis", url: "https://www.facebook.com/groups/402946181962616", selected: true },
-  { id: "g4", name: "Desis in Frisco, Celina, Plano...", url: "https://www.facebook.com/groups/498850401892441", selected: true },
-  { id: "g5", name: "Allen Plano McKinney Desis", url: "https://www.facebook.com/groups/1438402670290014", selected: true },
-];
+const DEFAULT_GROUPS = [];
 
 const DEFAULT_VARIANTS = [
   {

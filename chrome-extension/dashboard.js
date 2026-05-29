@@ -491,7 +491,7 @@ async function loadState() {
     getStoredSession()
   ]);
   state.user = auth.user || null;
-  if (state.user) state.user.plan = getUserPlan(state.user.email);
+  if (state.user) state.user.plan = state.user.plan || getUserPlan(state.user.email);
   state.recoverySession = auth.session?.type === "recovery" ? auth.session : null;
   state.groups = Array.isArray(data.userGroups)
     ? data.userGroups
