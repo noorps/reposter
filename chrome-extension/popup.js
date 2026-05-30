@@ -268,18 +268,5 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
   renderGroups();
 });
 
-function updateUpgradeNudge() {
-  const nudge = document.getElementById("upgradeNudge");
-  if (!nudge) return;
-  const postableGroups = groups.filter(g => g.url);
-  nudge.style.display = postableGroups.length >= 4 ? "flex" : "none";
-}
-
-const origRenderGroups = renderGroups;
-function renderGroups() {
-  origRenderGroups();
-  updateUpgradeNudge();
-}
-
 loadVariants();
 loadGroups();

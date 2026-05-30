@@ -260,7 +260,10 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === "weeklyReminder") showNotification();
 });
 
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "install") {
+    chrome.tabs.create({ url: "https://noorps.github.io/reposter" });
+  }
   chrome.storage.local.get(["reminderDay", "reminderTime"], (data) => {
     setWeeklyReminder(data.reminderDay ?? 1, data.reminderTime ?? 9);
   });

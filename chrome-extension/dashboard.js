@@ -410,6 +410,7 @@ const PRO_EMAILS = [
 
 const FREE_GROUP_LIMIT = 4;
 const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/3cIfZha4vfNQaus1d648000";
+const LANDING_PAGE = "https://noorps.github.io/reposter";
 
 function getUserPlan(email) {
   return PRO_EMAILS.includes((email || "").toLowerCase().trim()) ? "pro" : "free";
@@ -548,6 +549,20 @@ function render() {
             <button id="changeBusiness" title="Change business type" style="flex-shrink:0;padding:3px 7px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--muted);font-size:12px;line-height:1.4;">✎</button>
           </div>
         </div>
+        ${state.user.plan !== "pro" ? `
+        <div style="margin-top:14px;padding:14px;background:var(--coral-soft);border:1px solid #f0c0b0;border-radius:16px;display:grid;gap:8px;">
+          <div style="font-size:12px;font-weight:800;color:#c85030;">Free plan</div>
+          <p style="font-size:12px;color:var(--muted);line-height:1.4;">Unlock unlimited groups and all future features.</p>
+          <a href="${STRIPE_PAYMENT_LINK}" target="_blank" style="display:block;text-align:center;padding:8px;background:linear-gradient(135deg,#2d78b7,#64a6cf);color:white;border-radius:999px;font-size:13px;font-weight:800;text-decoration:none;">Go Pro — $7/mo</a>
+          <a href="${LANDING_PAGE}#pricing" target="_blank" style="text-align:center;font-size:11px;color:var(--muted);text-decoration:none;">See what\'s included →</a>
+        </div>` : `
+        <div style="margin-top:14px;padding:10px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:8px;">
+          <span style="font-size:18px;">⭐</span>
+          <div>
+            <div style="font-size:12px;font-weight:800;color:var(--text);">Pro plan</div>
+            <div style="font-size:11px;color:var(--subtle);">Unlimited groups</div>
+          </div>
+        </div>`}
         <div class="sidebar-footer">
           <p class="muted">${escapeHtml(state.user.email)}</p>
           <button class="ghost" id="signOut">Sign out</button>
@@ -958,10 +973,7 @@ function renderSearch(content) {
         <p class="muted">Search for niche Facebook groups by keyword, community, or interest.</p>
       </div>
     </div>
-    ${atLimit ? `<div style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px;padding:14px 18px;background:var(--coral-soft);border:1px solid #f0c0b0;border-radius:16px;">
-        <span style="font-size:13px;font-weight:700;color:#c85030;">🔒 Free plan: ${FREE_GROUP_LIMIT} groups max.</span>
-        <a href="${STRIPE_PAYMENT_LINK}" target="_blank" class="primary" style="white-space:nowrap;text-decoration:none;padding:8px 16px;font-size:13px;">Upgrade to Pro</a>
-      </div>` : ""}
+    ${atLimit ? `<div class="notice" style="margin-bottom:14px;border-radius:14px;padding:12px 16px;max-width:100%;">🔒 You\'re on the free plan — ${FREE_GROUP_LIMIT} groups max. Upgrade to save more.</div>` : ""}
     <div class="card" style="max-width:680px;">
       <p class="muted" style="margin-bottom:14px;font-size:13px;line-height:1.5;">
         Try keywords like <em>“black entrepreneurs chicago”</em>, <em>“latino families dallas”</em>, <em>“south asian professionals seattle”</em>, <em>“rooms for rent atlanta”</em>, or any community or niche group you want to reach.
@@ -1059,15 +1071,12 @@ function renderHome(content) {
 function renderGroups(content) {
   const atLimit = state.user.plan !== "pro" && state.groups.length >= FREE_GROUP_LIMIT;
   const upgradeNotice = atLimit
-    ? `<div style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px;padding:14px 18px;background:var(--coral-soft);border:1px solid #f0c0b0;border-radius:16px;">
-        <span style="font-size:13px;font-weight:700;color:#c85030;">🔒 Free plan: ${state.groups.length} / ${FREE_GROUP_LIMIT} groups used.</span>
-        <a href="${STRIPE_PAYMENT_LINK}" target="_blank" class="primary" style="white-space:nowrap;text-decoration:none;padding:8px 16px;font-size:13px;">Upgrade to Pro</a>
+    ? `<div class="notice" style="margin-bottom:14px;border-radius:14px;padding:12px 16px;max-width:100%;">
+        🔒 You\'re on the free plan — ${FREE_GROUP_LIMIT} groups max.
+        Upgrade to pro for unlimited groups. Contact <a href="mailto:reposterfaqs@gmail.com">reposterfaqs@gmail.com</a> to upgrade.
       </div>`
     : state.user.plan === "free"
-      ? `<div style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px;padding:10px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;">
-          <span style="font-size:13px;color:var(--subtle);">${state.groups.length} / ${FREE_GROUP_LIMIT} groups on free plan</span>
-          <a href="${STRIPE_PAYMENT_LINK}" target="_blank" style="font-size:12px;font-weight:700;color:var(--accent);">Upgrade for unlimited →</a>
-        </div>`
+      ? `<div style="margin-bottom:14px;color:var(--subtle);font-size:13px;">${state.groups.length} / ${FREE_GROUP_LIMIT} groups used on free plan.</div>`
       : "";
   content.innerHTML = `
     <div class="page-title">
@@ -1140,8 +1149,7 @@ function groupRow(group) {
 
 async function addGroup() {
   if (state.user.plan !== "pro" && state.groups.length >= FREE_GROUP_LIMIT) {
-    showToast("Free plan limit reached — upgrade to pro for unlimited groups.");
-    window.open(STRIPE_PAYMENT_LINK, "_blank");
+    alert(`You\'ve reached the ${FREE_GROUP_LIMIT}-group limit on the free plan. Upgrade to pro for unlimited groups.`);
     return;
   }
   const name = prompt("Group name");
@@ -1278,8 +1286,7 @@ function drawRecommendations(savedIds, recommendedGroups = getRecommendedGroups(
       const candidate = (state.lookupResults[button.dataset.recId] || [])[Number(button.dataset.candidateIndex)];
       if (!rec || !candidate) return;
       if (state.user.plan !== "pro" && state.groups.length >= FREE_GROUP_LIMIT) {
-        showToast("Free plan limit reached — upgrade to pro for unlimited groups.");
-        window.open(STRIPE_PAYMENT_LINK, "_blank");
+        alert(`You've reached the ${FREE_GROUP_LIMIT}-group limit on the free plan. Upgrade to pro for unlimited groups.`);
         return;
       }
 
@@ -1309,8 +1316,7 @@ function drawRecommendations(savedIds, recommendedGroups = getRecommendedGroups(
       const rec = recommendedGroups.find(group => group.id === button.dataset.saveRec);
       if (!rec) return;
       if (state.user.plan !== "pro" && state.groups.length >= FREE_GROUP_LIMIT) {
-        showToast("Free plan limit reached — upgrade to pro for unlimited groups.");
-        window.open(STRIPE_PAYMENT_LINK, "_blank");
+        alert(`You've reached the ${FREE_GROUP_LIMIT}-group limit on the free plan. Upgrade to pro for unlimited groups.`);
         return;
       }
       state.groups.push({
