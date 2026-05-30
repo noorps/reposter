@@ -1073,7 +1073,7 @@ function renderGroups(content) {
   const upgradeNotice = atLimit
     ? `<div class="notice" style="margin-bottom:14px;border-radius:14px;padding:12px 16px;max-width:100%;">
         🔒 You\'re on the free plan — ${FREE_GROUP_LIMIT} groups max.
-        Upgrade to pro for unlimited groups. Contact <a href="mailto:reposterfaqs@gmail.com">reposterfaqs@gmail.com</a> to upgrade.
+        Upgrade to pro for unlimited groups. Contact <a href="mailto:reposterfaq@gmail.com">reposterfaq@gmail.com</a> to upgrade.
       </div>`
     : state.user.plan === "free"
       ? `<div style="margin-bottom:14px;color:var(--subtle);font-size:13px;">${state.groups.length} / ${FREE_GROUP_LIMIT} groups used on free plan.</div>`
@@ -1149,7 +1149,8 @@ function groupRow(group) {
 
 async function addGroup() {
   if (state.user.plan !== "pro" && state.groups.length >= FREE_GROUP_LIMIT) {
-    alert(`You\'ve reached the ${FREE_GROUP_LIMIT}-group limit on the free plan. Upgrade to pro for unlimited groups.`);
+    showToast("Free plan limit reached — upgrade to pro for unlimited groups.");
+    window.open(STRIPE_PAYMENT_LINK, "_blank");
     return;
   }
   const name = prompt("Group name");
@@ -1286,7 +1287,8 @@ function drawRecommendations(savedIds, recommendedGroups = getRecommendedGroups(
       const candidate = (state.lookupResults[button.dataset.recId] || [])[Number(button.dataset.candidateIndex)];
       if (!rec || !candidate) return;
       if (state.user.plan !== "pro" && state.groups.length >= FREE_GROUP_LIMIT) {
-        alert(`You've reached the ${FREE_GROUP_LIMIT}-group limit on the free plan. Upgrade to pro for unlimited groups.`);
+        showToast("Free plan limit reached — upgrade to pro for unlimited groups.");
+        window.open(STRIPE_PAYMENT_LINK, "_blank");
         return;
       }
 
@@ -1316,7 +1318,8 @@ function drawRecommendations(savedIds, recommendedGroups = getRecommendedGroups(
       const rec = recommendedGroups.find(group => group.id === button.dataset.saveRec);
       if (!rec) return;
       if (state.user.plan !== "pro" && state.groups.length >= FREE_GROUP_LIMIT) {
-        alert(`You've reached the ${FREE_GROUP_LIMIT}-group limit on the free plan. Upgrade to pro for unlimited groups.`);
+        showToast("Free plan limit reached — upgrade to pro for unlimited groups.");
+        window.open(STRIPE_PAYMENT_LINK, "_blank");
         return;
       }
       state.groups.push({
@@ -1375,7 +1378,7 @@ function renderAbout(content) {
         <span class="pill">Made locally</span>
         <h3>developed by noor 𓆝 𓆟 𓆞 𓆝</h3>
         <p class="muted">reposter is an early facebook discovery platform. tutors, small businesses, and local service providers that want to spread their word to niche groups and post more consistently: this is for you! this is always a work in progress and I'm always open to feedback. &lt;3</p>
-        <p class="muted">Send notes to <a href="mailto:reposterfaqs@gmail.com">reposterfaqs@gmail.com</a>. Include what you were trying to do, what happened, and any screenshots that make the issue easier to understand.</p>
+        <p class="muted">Send notes to <a href="mailto:reposterfaq@gmail.com">reposterfaq@gmail.com</a>. Include what you were trying to do, what happened, and any screenshots that make the issue easier to understand.</p>
       </section>
     </div>
   `;
