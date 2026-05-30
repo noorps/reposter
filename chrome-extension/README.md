@@ -15,24 +15,24 @@ Weekly reminder notification keeps you on schedule.
 
 ## The interesting part
 
-Facebook's composer runs on [Lexical](https://lexical.dev/), Meta's rich text editor. Setting `element.value` directly does not work because Lexical manages its own state separately from the DOM.
+Facebook's composer runs on [Lexical](https://lexical.dev/), Meta's rich text editor. Setting `element.value` directly does not work because Lexical manages its own state separately from the DOM, and standard DOM events like `ClipboardEvent` are intercepted and ignored.
 
-Fix: simulate a paste event via `ClipboardEvent` + `DataTransfer`. Lexical processes paste events through its own state manager, so the text registers correctly and the Post button activates.
+Fix: use Chrome's debugger API to simulate keyboard input at the protocol level, bypassing Lexical's event filtering entirely.
 
 ```js
-const dataTransfer = new DataTransfer();
-dataTransfer.setData('text/plain', postText);
-composer.dispatchEvent(new ClipboardEvent('paste', {
-  clipboardData: dataTransfer,
-  bubbles: true,
-  cancelable: true
-}));
+chrome.debugger.attach({ tabId }, "1.3", () => {
+  chrome.debugger.sendCommand({ tabId }, "Input.insertText", { text }, () => {
+    chrome.debugger.detach({ tabId });
+  });
+});
 ```
 
 ## Stack
 
 - Vanilla JS, Chrome Extensions Manifest V3
-- Chrome APIs: `tabs`, `scripting`, `storage`, `alarms`, `notifications`
+- Chrome APIs: `tabs`, `scripting`, `storage`, `alarms`, `notifications`, `debugger`
+- Supabase Auth + Postgres for user accounts and plan management
+- Stripe for payments
 
 ## Install
 
@@ -41,10 +41,7 @@ composer.dispatchEvent(new ClipboardEvent('paste', {
 3. Enable Developer mode
 4. Click Load unpacked and select the `chrome-extension` folder
 
-To use with your own groups, update `GROUPS` in `popup.js` and `postText` in `content.js`.
-
 ## Roadmap
 
 - [ ] Copy variants to avoid spam detection
-- [ ] Web dashboard (Next.js + Supabase) for managing groups and post text
 - [ ] Nextdoor and Craigslist support
