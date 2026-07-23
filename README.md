@@ -1,122 +1,81 @@
-# Reposter
+<h1 align="center">𓆝 𓆟 𓆞 reposter 𓆞 𓆟 𓆝</h1>
 
-Reposter is a Chrome extension that helps local businesses and service providers share their message across relevant Facebook groups without repeating the same copy-and-paste workflow.
+<p align="center">
+  post to the facebook groups that actually matter to your community, without doing the same copy-paste dance every week.
+</p>
 
-It opens selected groups, finds Facebook's post composer, and pre-fills the chosen message. The user reviews each post and clicks **Post**, keeping the final publishing decision in their hands.
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/reposter/klcefljmljgkojnjffjhpbmocnjdphlp">add to chrome</a>
+  ·
+  <a href="https://noorps.github.io/reposter">website</a>
+  ·
+  <a href="https://noorps.github.io/reposter/privacy.html">privacy</a>
+</p>
 
-[Add Reposter to Chrome](https://chromewebstore.google.com/detail/reposter/klcefljmljgkojnjffjhpbmocnjdphlp) | [Visit the product site](https://noorps.github.io/reposter) | [Read the privacy policy](https://noorps.github.io/reposter/privacy.html)
+<p align="center">𓆝 𓆟 𓆞 𓆝</p>
 
-## The problem
+## what is this?
 
-Tutors, photographers, real estate agents, cleaners, coaches, and other local service providers often rely on niche Facebook groups to reach nearby customers. Posting consistently means opening the same groups, finding each composer, and pasting the same message again and again.
+i kept watching local businesses, tutors, photographers, real estate agents, and other service providers spend way too much time posting the same thing across facebook groups.
 
-Reposter handles that repetitive setup while leaving every final post under the user's control.
+open a group. find the composer. paste the message. repeat. a lot.
 
-## Features
+reposter takes care of the annoying part. save your messages, pick your groups, and start a posting session. it opens each group and fills in the composer for you. you still review everything and click **post** yourself.
 
-- Save multiple message variants for different services or audiences
-- Organize and select frequently used Facebook groups
-- Search for niche communities by keyword, location, or interest
-- Get group recommendations based on business type and location
-- Open selected groups and pre-fill each post composer
-- Detect and skip paused or restricted groups
-- Schedule a weekly reminder to stay consistent
-- Use up to four saved groups on the free plan
+no mystery auto-posting. no handing over your facebook password. just fewer tabs to wrestle with.
 
-## How it works
+## the fun part
 
-1. Save a message in the Reposter dashboard.
-2. Add Facebook groups manually or discover new ones through search and recommendations.
-3. Select the groups you want to reach.
-4. Start a posting session.
-5. Reposter opens each group and pre-fills the composer.
-6. Review the content and click **Post** yourself.
+facebook's post composer is built on lexical, which means the normal "find a text box and set its value" trick does not work.
 
-Reposter does not publish posts automatically.
+reposter gets around that by using chrome's debugger api to type into the composer like a real keyboard. it attaches only while the text is being inserted, then immediately gets out of the way.
 
-## Technical highlights
+that tiny headache is basically why this project exists.
 
-Facebook's composer is built with Lexical and does not reliably respond to standard DOM value assignment. Reposter uses Chrome's debugger API to simulate keyboard input at the moment text is inserted. The debugger detaches immediately afterward.
+## what it can do
 
-The extension is built with:
+- save different messages for different services or audiences
+- keep your regular facebook groups in one place
+- search for niche communities by keyword, interest, or location
+- recommend groups based on what your business does and where it is
+- open selected groups and pre-fill the post composer
+- skip groups that are paused or restricted
+- remind you to post each week
 
-- JavaScript, HTML, and CSS
-- Chrome Extension Manifest V3
-- Chrome storage, tabs, scripting, alarms, notifications, and debugger APIs
-- Supabase authentication and profile storage
-- GitHub Pages for the product site and privacy policy
+## try it
 
-## Project structure
+the easiest way is through the [chrome web store](https://chromewebstore.google.com/detail/reposter/klcefljmljgkojnjffjhpbmocnjdphlp).
 
-```text
-.
-├── chrome-extension/
-│   ├── manifest.json
-│   ├── background.js
-│   ├── popup.html
-│   ├── popup.js
-│   ├── dashboard.html
-│   ├── dashboard.css
-│   ├── dashboard.js
-│   ├── auth.js
-│   └── supabase-config.js
-├── index.html
-└── privacy.html
+once it is installed, click the reposter icon in your chrome toolbar and the dashboard will walk you through the rest.
+
+if you want to poke around locally:
+
+```bash
+git clone https://github.com/noorps/reposter.git
 ```
 
-## Install
+then open `chrome://extensions`, turn on developer mode, click **load unpacked**, and select the `chrome-extension` folder.
 
-### Chrome Web Store
+you will need your own supabase configuration for authentication.
 
-Install the published extension from the [Chrome Web Store](https://chromewebstore.google.com/detail/reposter/klcefljmljgkojnjffjhpbmocnjdphlp).
+## built with
 
-After installation, click the Reposter icon in the Chrome toolbar to open the dashboard.
+javascript, html, css, chrome manifest v3, supabase, postgres rls, chrome storage, and a slightly stubborn facebook editor.
 
-### Local development
+the main extension lives in `chrome-extension/`. the product site and privacy policy live at the repository root and are published with github pages.
 
-1. Clone this repository.
+## a quick privacy note
 
-   ```bash
-   git clone https://github.com/noorps/reposter.git
-   ```
+reposter does not know your facebook password and does not publish anything without you.
 
-2. Open `chrome://extensions` in Chrome.
-3. Enable **Developer mode**.
-4. Click **Load unpacked**.
-5. Select the `chrome-extension` directory.
-6. Open the extension from the Chrome toolbar.
+your messages, groups, reminders, and session details stay in chrome's local extension storage. supabase handles account authentication and the profile information used for recommendations.
 
-A valid Supabase configuration is required for account authentication.
+the full version is in the [privacy policy](https://noorps.github.io/reposter/privacy.html).
 
-## Permissions
+please use reposter like a person. respect group rules, do not spam people, and make sure what you are sharing is actually useful.
 
-Reposter requests only the Chrome permissions needed for its core workflow:
+<p align="center">𓆝 𓆟 𓆞 𓆝</p>
 
-- `tabs` to open selected Facebook group pages
-- `scripting` to interact with the page
-- `storage` to save groups, messages, settings, and session data locally
-- `alarms` and `notifications` for weekly reminders
-- `debugger` to simulate text input in Facebook's Lexical composer
-- Access to `facebook.com` pages where the extension operates
-
-The debugger permission is used only while inserting text and is detached immediately afterward.
-
-## Privacy
-
-Reposter does not store Facebook credentials or publish without user confirmation.
-
-Saved messages, group selections, reminder settings, and session information are stored in Chrome's local extension storage. Supabase stores account and profile information used for authentication and personalized recommendations.
-
-For full details, read the [privacy policy](https://noorps.github.io/reposter/privacy.html).
-
-## Responsible use
-
-Users are responsible for following Facebook's rules and the rules of each group they join. Reposter is intended to reduce repetitive work, not to enable spam or bypass moderation.
-
-## Support
-
-For questions, feedback, or account deletion requests, contact [reposterfaq@gmail.com](mailto:reposterfaq@gmail.com).
-
-## Author
-
-Built by [Purnoor Sharma](https://github.com/noorps).
+<p align="center">
+  built by <a href="https://github.com/noorps">purnoor</a>
+</p>
