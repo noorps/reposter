@@ -14,6 +14,16 @@
 
 <p align="center">𓆝 𓆟 𓆞 𓆝</p>
 
+<p align="center">
+  <img src="assets/reposter-dashboard.png" alt="reposter dashboard showing selected facebook groups" width="900">
+</p>
+
+## see it in action
+
+<p align="center">
+  <img src="assets/reposter-demo.gif" alt="reposter walkthrough from group selection to a pre-filled post" width="900">
+</p>
+
 ## what is this?
 
 i kept watching local businesses, tutors, photographers, real estate agents, and other service providers spend way too much time posting the same thing across facebook groups.
